@@ -4,7 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class FlashCardBuilder {
 
@@ -121,7 +125,13 @@ public class FlashCardBuilder {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("save clicked");
+            FlashCard card = new FlashCard(question.getText(), answer.getText());
+            cardList.add(card);
+
+            // Create a file dialog with file chooser
+            JFileChooser fileSave = new JFileChooser();
+            fileSave.showSaveDialog(frame);
+            saveFile(fileSave.getSelectedFile());
         }
     }
 
@@ -129,5 +139,23 @@ public class FlashCardBuilder {
         question.setText("");
         answer.setText("");
         question.requestFocus();
+    }
+
+    private void saveFile(File selectedFile) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(selectedFile));
+
+            Iterator<FlashCard> cardIterator = cardList.iterator();
+            while (cardIterator.hasNext()) {
+                FlashCard card = (FlashCard) cardIterator.next();
+                // Format example: What is the capital of Vermont?/Montpelier
+                writer.write(card.getQuestion() + "/");
+                writer.write(card.getAnswer() + "\n");
+            }
+            writer.close();
+        } catch (Exception e) {
+            System.out.println("Couldn't write to file.");
+            e.printStackTrace();
+        }
     }
 }
