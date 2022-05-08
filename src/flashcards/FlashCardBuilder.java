@@ -48,6 +48,8 @@ public class FlashCardBuilder {
         //Create 'next card' button
         JButton nextButton = new JButton("Next Card");
 
+        cardList = new ArrayList<FlashCard>();
+
         //Create a few labels
         JLabel qJLabel = new JLabel(("Question"));
         JLabel aJLabel = new JLabel(("Answer  "));
@@ -100,7 +102,10 @@ public class FlashCardBuilder {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("Button Clicked");
+            // Create a flashcard
+            FlashCard card = new FlashCard(question.getText(), answer.getText());
+            cardList.add(card);
+            clearCard();
         }
     }
 
@@ -108,7 +113,7 @@ public class FlashCardBuilder {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("new clicked");
+
         }
     }
 
@@ -118,5 +123,11 @@ public class FlashCardBuilder {
         public void actionPerformed(ActionEvent e) {
             System.out.println("save clicked");
         }
+    }
+
+    private void clearCard() {
+        question.setText("");
+        answer.setText("");
+        question.requestFocus();
     }
 }
