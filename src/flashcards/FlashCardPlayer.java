@@ -4,9 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
 public class FlashCardPlayer {
     private JTextArea display;
@@ -74,7 +77,20 @@ public class FlashCardPlayer {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            if (isShowAnswer) {
+                display.setText(currentCard.getAnswer());
+                showAnswer.setText("Next Card");
+                isShowAnswer = false;
+            } else {
+                // show next question
+                if (cardIterator.hasNext()) {
+                    showNextCard();
+                } else {
+                    // no more cards
+                    display.setText("That was the last card.");
+                    showAnswer.setEnabled(false);
+                }
+            }
         }
     }
 
@@ -89,6 +105,42 @@ public class FlashCardPlayer {
     }
 
     private void loadFile(File selectedFile){
+        cardList = new ArrayList<FlashCard>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(selectedFile));
+            String line = null;
+            while((line = reader.readLine()) != null) {
+                makeCard(line);
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Couldn't read file");
+            e.printStackTrace();
+        }
+        // show the first card
+        cardIterator = cardList.iterator();
+        showNextCard();
+    }
 
+    private void makeCard(String lineToParse) {
+//        String tokenizer approach:
+        StringTokenizer result = new StringTokenizer(lineToParse, "/");
+        if (result.hasMoreTokens()) {
+            FlashCard card = new FlashCard(result.nextToken(), result.nextToken());
+            cardList.add(card);
+            System.out.println("Made a Card");
+        }
+//        String array approach:
+//        String[] result = lineToParse.split("/"); // [question, answer]
+//        FlashCard card = new FlashCard(result[0], result[1]);
+//        cardList.add(card);
+//        System.out.println("Made a Card");
+    }
+
+    private void showNextCard() {
+        currentCard = (FlashCard) cardIterator.next();
+        display.setText(currentCard.getQuestion());
+        showAnswer.setText("Show Answer");
+        isShowAnswer = true;
     }
 }
