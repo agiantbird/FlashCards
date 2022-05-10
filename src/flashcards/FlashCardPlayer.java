@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -40,7 +41,18 @@ public class FlashCardPlayer {
 
         showAnswer.addActionListener(new NextCardListener());
 
+        // Add menu
+        JMenuBar menuBar = new JMenuBar();
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem loadMenuItem = new JMenuItem("Load Card Set");
+        loadMenuItem.addActionListener(new OpenMenuListener());
+
+        fileMenu.add(loadMenuItem);
+        menuBar.add(fileMenu);
+
+
         //Add to frame
+        frame.setJMenuBar(menuBar);
         frame.getContentPane().add(BorderLayout.CENTER, mainPanel);
         frame.setSize(640, 500);
         frame.setVisible(true);
@@ -64,5 +76,19 @@ public class FlashCardPlayer {
         public void actionPerformed(ActionEvent e) {
 
         }
+    }
+
+    class OpenMenuListener implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser fileOpen = new JFileChooser();
+            fileOpen.showOpenDialog(frame);
+            loadFile(fileOpen.getSelectedFile());
+        }
+    }
+
+    private void loadFile(File selectedFile){
+
     }
 }
